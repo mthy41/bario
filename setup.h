@@ -1,0 +1,12 @@
+#ifndef SETUP
+#define SETUP
+
+#define SCALE_FACTOR 1.5
+#define SCREEN_WIDTH 800 * SCALE_FACTOR
+#define SCREEN_HEIGHT 600 * SCALE_FACTOR
+#define V_MID SCREEN_WIDTH / 2
+#define H_MID SCREEN_HEIGHT / 2
+#define ACCELERATION 0.5
+#define START_POINTS 0
+
+#endif
