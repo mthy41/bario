@@ -8,5 +8,6 @@
 #define H_MID SCREEN_HEIGHT / 2
 #define ACCELERATION 0.5
 #define START_POINTS 0
+#define TARGET_FPS 60
 
 #endif

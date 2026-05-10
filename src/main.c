@@ -38,7 +38,7 @@ int main(void){
     const int WINDOWS_OFFSET = 0;
 
     InitWindow(SCREEN_WIDTH+WINDOWS_OFFSET, SCREEN_HEIGHT+WINDOWS_OFFSET, "Hi!");
-    SetTargetFPS(60);
+    SetTargetFPS(TARGET_FPS);
 
     Player* p = newPlayerDefault();
     Food** foods = genRandFoods(10);

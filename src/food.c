@@ -63,7 +63,7 @@ static void printFoodsInfo(Food** fs, int fa){
 }
 
 static void drain(Food* f){
-    const float drainFactor = 0.1;
+    const float drainFactor = 0.01;
     if((f->mass.value - drainFactor) > f->mass.min){
         f->mass.value -= drainFactor;
     } else { f->mass.value = f->mass.min; }

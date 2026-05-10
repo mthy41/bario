@@ -1,22 +1,44 @@
-player.o: player.c player.h utils.h setup.h
-	gcc -c player.c
+SRC_DIR = ./src
+OUTPUT_DIR = ./target
+BIN_DIR = $(OUTPUT_DIR)/bin
+BIN_NAME = $(BIN_DIR)/bario
 
-food.o: food.c food.h utils.h setup.h
-	gcc -c food.c
+src = $(addprefix $(SRC_DIR)/, $(1))
 
-utils.o: utils.c utils.h setup.h
-	gcc -c utils.c
+UTILS_OBJ = $(OUTPUT_DIR)/utils.o
+PARTICLE_OBJ = $(OUTPUT_DIR)/particle.o
+PLAYER_OBJ = $(OUTPUT_DIR)/player.o
+FOOD_OBJ = $(OUTPUT_DIR)/food.o
+MAIN_OBJ = $(OUTPUT_DIR)/main.o
 
-main.o: main.c utils.h player.h food.h setup.h
-	gcc -c main.c 
+$(shell mkdir -p $(OUTPUT_DIR))
 
-main: utils.o main.o player.o food.o
-	gcc -o main main.o utils.o player.o food.o -lraylib
+$(BIN_NAME): $(UTILS_OBJ) $(PARTICLE_OBJ) $(PLAYER_OBJ) $(FOOD_OBJ) $(MAIN_OBJ)
+	mkdir -p $(BIN_DIR)
+	gcc $^ -lraylib -o $@
 
-clean: main
-	rm -f *.o
-	mkdir -p ./target/
-	mv main ./target/
+$(MAIN_OBJ): $(call src, main.c utils.h player.h food.h setup.h)
+	gcc -c $< -o $@
 
-run: clean
-	./target/main
+$(PARTICLE_OBJ): $(call src, particle.c setup.h particle.h)
+	gcc -c $< -o $@
+
+$(PLAYER_OBJ): $(call src, player.c player.h utils.h setup.h)
+	gcc -c $< -o $@
+
+$(FOOD_OBJ): $(call src, food.c food.h utils.h setup.h)
+	gcc -c $< -o $@
+
+$(UTILS_OBJ): $(call src, utils.c utils.h setup.h)
+	gcc -c $< -o $@
+
+clean:
+	rm -f $(OUTPUT_DIR)/*.o
+
+purge: 
+	rm -rf $(OUTPUT_DIR)
+
+run: $(BIN_NAME)
+	./$<
+
+.PHONY: clean purge run
