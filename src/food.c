@@ -26,6 +26,7 @@ Food *newRandFood() {
     return f;
 }
 
+
 Food** genRandFoods(int amount){
     Food** fArr = malloc(sizeof(Food*)*amount);
     for(int i=0; i<amount; i++){

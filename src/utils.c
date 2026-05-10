@@ -17,6 +17,20 @@ unsigned int randRange(int from, int to){
     return randui;
 }
 
+int sRandRange(int from, int to){
+    int seed;
+    int randi;
+    FILE* urandom = fopen("/dev/urandom", "rb");
+    if(urandom == NULL){
+        perror("failed to read /dev/urandom\n");
+    }
+    fread(&seed, sizeof(seed), 1, urandom);
+    fclose(urandom);
+    srand(seed);
+    randi = (rand());
+    return randi;
+}
+
 Color randColor(){
     Color c = {
         .a = 255,
@@ -25,4 +39,8 @@ Color randColor(){
         .b = randRange(0, 255)
     };
     return c;
+}
+
+Vector2 randDir(){
+    
 }

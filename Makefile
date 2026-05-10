@@ -13,6 +13,25 @@ MAIN_OBJ = $(OUTPUT_DIR)/main.o
 
 $(shell mkdir -p $(OUTPUT_DIR))
 
+
+# ----------------- TEST ------------------
+TEST_DIR = ./test.c
+TEST_BIN = $(BIN_DIR)/test
+TEST_OBJ = $(OUTPUT_DIR)/test.o
+TEST_INC = utils.h setup.h player.h food.h particle.h
+TEST_LNK = $(UTILS_OBJ) $(PARTICLE_OBJ) $(PLAYER_OBJ) $(FOOD_OBJ)
+$(TEST_OBJ): $(TEST_DIR) $(call src, $(TEST_INC)) 
+	gcc -c $< -o $@ -I ./src/
+
+$(TEST_BIN): $(TEST_OBJ) $(TEST_LNK) 
+	mkdir -p $(BIN_DIR)
+	gcc $^ -o $@ -lraylib
+
+tests: $(TEST_BIN)
+	./$<
+# -----------------------------------------
+
+
 $(BIN_NAME): $(UTILS_OBJ) $(PARTICLE_OBJ) $(PLAYER_OBJ) $(FOOD_OBJ) $(MAIN_OBJ)
 	mkdir -p $(BIN_DIR)
 	gcc $^ -lraylib -o $@
@@ -34,6 +53,7 @@ $(UTILS_OBJ): $(call src, utils.c utils.h setup.h)
 
 clean:
 	rm -f $(OUTPUT_DIR)/*.o
+	rm -f $(BIN_DIR)/*
 
 purge: 
 	rm -rf $(OUTPUT_DIR)
@@ -41,4 +61,4 @@ purge:
 run: $(BIN_NAME)
 	./$<
 
-.PHONY: clean purge run
+.PHONY: clean purge run test

@@ -41,12 +41,12 @@ int main(void){
     SetTargetFPS(TARGET_FPS);
 
     Player* p = newPlayerDefault();
-    Food** foods = genRandFoods(10);
+    Food** foods = genRandFoods(30);
 
     while(!WindowShouldClose())
     {
-        draw(p, foods, 10);
-        update(p, foods, 10);
+        draw(p, foods, 30);
+        update(p, foods, 30);
     }
 
     CloseWindow();

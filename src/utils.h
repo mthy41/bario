@@ -19,6 +19,7 @@ typedef float sec_float;
 
 unsigned int randRange(int from, int to);
 Color randColor();
+Vector2 randDir();
 
 static inline float normBF(BoundedFloat* bf) {
     return (bf->value - bf->min)/(bf->max - bf->min);

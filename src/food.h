@@ -10,6 +10,8 @@ typedef struct {
     int radius;
     Vector2 pos;
     BoundedFloat mass;
+    float speed;
+    Vector2 dir;
 } Food;
 
 Food* newRandFood();
