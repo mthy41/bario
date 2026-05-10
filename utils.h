@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <raylib.h>
 
+#define DEBUG
+
 typedef struct {
     float value;
     float min;

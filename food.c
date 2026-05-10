@@ -10,12 +10,14 @@ Food *newRandFood() {
     Food *f = (Food *)malloc(sizeof(Food));
     f->color = randColor();
     f->mass.max = 40;
-    f->mass.min = 1;
+    f->mass.min = 20;
     f->mass.value = randRange(f->mass.min, f->mass.max);
     f->radius = (normBF(&f->mass) * 20) + 10;
 
+    #ifdef DEBUG
     printf("normlized value: %f\n", normBF(&f->mass));
     printf("normlized radius with 30: %d\n", f->radius);
+    #endif
 
     int bound = f->radius * 2;
     f->pos.y = randRange(bound, SCREEN_HEIGHT - bound);
@@ -41,7 +43,6 @@ void drawFoods(Food **foods, int amount) {
 }
 
 int checkFoodColision(Player* p, Food *f){
-    // return CheckCollisionCircles(p->pos, p->radius, f->pos, f->radius);
     int touch = CheckCollisionCircles(f->pos, f->radius, p->pos, p->radius - f->radius);
     return (touch && p->radius >= f->radius);
 }
@@ -61,6 +62,13 @@ static void printFoodsInfo(Food** fs, int fa){
     }
 }
 
+static void drain(Food* f){
+    const float drainFactor = 0.1;
+    if((f->mass.value - drainFactor) > f->mass.min){
+        f->mass.value -= drainFactor;
+    } else { f->mass.value = f->mass.min; }
+}
+
 void updateFoods(Player* p, Food** fs, int fa){
     for (int i=0; i<fa; i++){
         if (fs[i] == NULL) continue;
@@ -69,10 +77,13 @@ void updateFoods(Player* p, Food** fs, int fa){
             p->mass.value += fs[i]->mass.value * 0.2;
             free(fs[i]);
             fs[i] = NULL;
+            continue;
         }
+        drain(fs[i]);
+        fs[i]->radius = (normBF(&fs[i]->mass) * 20) + 20;
     }
 
-    // DEBUG
+    #ifdef DEBUG
     if (IsKeyPressed(KEY_T)){
         tintFoods(fs, fa, RED);
     }
@@ -80,4 +91,5 @@ void updateFoods(Player* p, Food** fs, int fa){
     if (IsKeyPressed(KEY_P)){
         printFoodsInfo(fs, fa);
     }
+    #endif
 }
