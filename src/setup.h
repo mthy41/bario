@@ -9,5 +9,7 @@
 #define ACCELERATION 0.5
 #define START_POINTS 0
 #define TARGET_FPS 60
+#define TODO
+#define DEBUG
 
 #endif

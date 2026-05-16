@@ -1,7 +1,9 @@
 #include <raylib.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "food.h"
+#include "physic.h"
 #include "player.h"
 #include "setup.h"
 #include "utils.h"
@@ -9,27 +11,27 @@
 Food *newRandFood() {
     Food *f = (Food *)malloc(sizeof(Food));
     f->color = randColor();
-    f->mass.max = 40;
-    f->mass.min = 20;
-    f->mass.value = randRange(f->mass.min, f->mass.max);
-    f->radius = (normBF(&f->mass) * 20) + 10;
+    
+    f->body.mass.max = 40;
+    f->body.mass.min = 20;
+    f->body.mass.value = randBodyMass(&f->body.mass);
+    f->body.speed = randDir(); scalar(&f->body.speed, randRange(1, 4));
+    f->body.hitboxRadius = fmin(scaleRadius(&f->body, FOOD_MAX_RADIUS) + FOOD_MIN_RADIUS, FOOD_MAX_RADIUS);
 
-    #ifdef DEBUG
-    printf("normlized value: %f\n", normBF(&f->mass));
-    printf("normlized radius with 30: %d\n", f->radius);
-    #endif
+    float bound = f->body.hitboxRadius * 2;
+    f->body.pos.x = randRange(bound, SCREEN_WIDTH - bound);
+    f->body.pos.y = randRange(bound, SCREEN_HEIGHT - bound);
 
-    int bound = f->radius * 2;
-    f->pos.y = randRange(bound, SCREEN_HEIGHT - bound);
-    f->pos.x = randRange(bound, SCREEN_WIDTH - bound);
+#ifdef DEBUG
+  TODO
+#endif
 
     return f;
 }
 
-
-Food** genRandFoods(int amount){
-    Food** fArr = malloc(sizeof(Food*)*amount);
-    for(int i=0; i<amount; i++){
+Food **genRandFoods(int amount) {
+    Food **fArr = malloc(sizeof(Food *) * amount);
+    for (int i = 0; i < amount; i++) {
         fArr[i] = newRandFood();
     }
     return fArr;
@@ -37,60 +39,89 @@ Food** genRandFoods(int amount){
 
 void drawFoods(Food **foods, int amount) {
     for (int i = 0; i < amount; i++) {
-        if(foods[i] == NULL) continue;
-        DrawCircle(foods[i]->pos.x, foods[i]->pos.y, foods[i]->radius,
-                   foods[i]->color);
-    }
-}
-
-int checkFoodColision(Player* p, Food *f){
-    int touch = CheckCollisionCircles(f->pos, f->radius, p->pos, p->radius - f->radius);
-    return (touch && p->radius >= f->radius);
-}
-
-static void tintFoods(Food** fs, int fa, Color c){
-    for (int i=0; i<fa; i++){
-        if (fs[i] == NULL) continue;
-        fs[i]->color = c;
-    }
-}
-
-static void printFoodsInfo(Food** fs, int fa){
-    printf("\n----- food coords -----\n");
-    for (int i=0; i<fa; i++){
-        if (fs[i] == NULL) continue;
-        printf("food %d: x.%f, y.%f\n, r.%d", i, fs[i]->pos.x, fs[i]->pos.y, fs[i]->radius);
-    }
-}
-
-static void drain(Food* f){
-    const float drainFactor = 0.01;
-    if((f->mass.value - drainFactor) > f->mass.min){
-        f->mass.value -= drainFactor;
-    } else { f->mass.value = f->mass.min; }
-}
-
-void updateFoods(Player* p, Food** fs, int fa){
-    for (int i=0; i<fa; i++){
-        if (fs[i] == NULL) continue;
-        if (checkFoodColision(p, fs[i])){
-            p->score++;
-            p->mass.value += fs[i]->mass.value * 0.2;
-            free(fs[i]);
-            fs[i] = NULL;
+        if (foods[i] == NULL)
             continue;
-        }
-        drain(fs[i]);
-        fs[i]->radius = (normBF(&fs[i]->mass) * 20) + 20;
+        DrawCircle(foods[i]->body.pos.x, foods[i]->body.pos.y, 
+                   foods[i]->body.hitboxRadius, foods[i]->color);
+    }
+}
+
+int checkFoodColision(Player *p, Food *f) {
+  int touch = CheckCollisionCircles(f->body.pos, 
+                                    f->body.hitboxRadius, 
+                                    p->body.pos, 
+                                    p->body.hitboxRadius - f->body.hitboxRadius);
+  return (touch && p->body.hitboxRadius >= f->body.hitboxRadius);
+}
+
+static void tintFoods(Food **fs, int fa, Color c) {
+  for (int i = 0; i < fa; i++) {
+    if (fs[i] == NULL)
+      continue;
+    fs[i]->color = c;
+  }
+}
+
+static void printFoodsInfo(Food **fs, int fa) {
+  printf("\n----- food coords -----\n");
+  for (int i = 0; i < fa; i++) {
+    if (fs[i] == NULL)
+      continue;
+    printf("food %d: x.%f, y.%f\n, r.%f", i, fs[i]->body.pos.x, fs[i]->body.pos.y,
+           fs[i]->body.hitboxRadius);
+  }
+}
+
+static void drain(Food *f) {
+  if ((f->body.mass.value - DRAIN_FACTOR) > f->body.mass.min) {
+    f->body.mass.value -= DRAIN_FACTOR;
+  } else {
+    f->body.mass.value = f->body.mass.min;
+  }
+}
+
+void updateFoods(Player *p, Food **fs, int fa) {
+  for (int i = 0; i < fa; i++) {
+    if (fs[i] == NULL)
+      continue;
+    if (checkFoodColision(p, fs[i])) {
+      p->score++;
+      p->body.mass.value += fs[i]->body.mass.value * 0.2;
+      free(fs[i]);
+      fs[i] = NULL;
+      continue;
     }
 
-    #ifdef DEBUG
-    if (IsKeyPressed(KEY_T)){
-        tintFoods(fs, fa, RED);
+    drain(fs[i]);
+    updateHitBoxRadius(&fs[i]->body, FOOD_MIN_RADIUS, FOOD_MAX_RADIUS);
+
+    if (windowRightXColision(&fs[i]->body)) {
+      fs[i]->body.speed.x *= -1;
     }
 
-    if (IsKeyPressed(KEY_P)){
-        printFoodsInfo(fs, fa);
+    if (windowLeftXColision(&fs[i]->body)) {
+      fs[i]->body.speed.x *= -1;
     }
-    #endif
+
+    if (windowBotYColision(&fs[i]->body)) {
+      fs[i]->body.speed.y *= -1;
+    }
+
+    if (windowTopYColision(&fs[i]->body)) {
+      fs[i]->body.speed.y *= -1;
+    }
+
+    fs[i]->body.pos.x += fs[i]->body.speed.x;
+    fs[i]->body.pos.y += fs[i]->body.speed.y;
+  }
+
+#ifdef DEBUG
+  if (IsKeyPressed(KEY_T)) {
+    tintFoods(fs, fa, RED);
+  }
+
+  if (IsKeyPressed(KEY_P)) {
+    printFoodsInfo(fs, fa);
+  }
+#endif
 }

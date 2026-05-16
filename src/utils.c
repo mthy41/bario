@@ -1,7 +1,9 @@
 #include "utils.h"
 #include <raylib.h>
+#include <raymath.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 unsigned int randRange(int from, int to){
     unsigned int seed;
@@ -17,18 +19,8 @@ unsigned int randRange(int from, int to){
     return randui;
 }
 
-int sRandRange(int from, int to){
-    int seed;
-    int randi;
-    FILE* urandom = fopen("/dev/urandom", "rb");
-    if(urandom == NULL){
-        perror("failed to read /dev/urandom\n");
-    }
-    fread(&seed, sizeof(seed), 1, urandom);
-    fclose(urandom);
-    srand(seed);
-    randi = (rand());
-    return randi;
+int randSign(){
+    return randRange(0, 2) ? -1 : 1;
 }
 
 Color randColor(){
@@ -41,6 +33,12 @@ Color randColor(){
     return c;
 }
 
+void printVector2(Vector2* v){
+    printf("x: %f, y: %f\n", v->x, v->y);
+}
+
 Vector2 randDir(){
-    
+    Vector2 v = {.x = 0.0f, .y = 1.0f};
+    v = Vector2Rotate(v, randRange(0, PI*2));
+    return v;
 }

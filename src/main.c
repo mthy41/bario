@@ -12,7 +12,7 @@ void drawScore(int* score){
     DrawText(str, SCREEN_WIDTH/2, 20, 50*SCALE_FACTOR, RAYWHITE);
 }
 
-int draw(Player* p, Food** foods, int fa)
+void draw(Player* p, Food** foods, int fa)
 {
    BeginDrawing();
         ClearBackground(PURPLE);
@@ -23,7 +23,7 @@ int draw(Player* p, Food** foods, int fa)
         drawFoods(foods, fa);
 
         //Player
-        DrawCircle(p->pos.x, p->pos.y, p->radius, p->color);
+        DrawCircle(p->body.pos.x, p->body.pos.y, p->body.hitboxRadius, p->color);
 
     EndDrawing();
 }

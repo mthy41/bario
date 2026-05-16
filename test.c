@@ -8,5 +8,7 @@
 #include "./src/particle.h"
 
 int main(void){
-    printf("testing tests\n");
+    printf("---------------------------------------------\n");
+    Vector2 v = randDir();
+    printVector2(&v);
 }

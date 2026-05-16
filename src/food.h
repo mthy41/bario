@@ -3,15 +3,17 @@
 
 #include "player.h"
 #include "utils.h"
+#include "physic.h"
 #include <raylib.h>
+
+#define FOOD_MIN_RADIUS 10
+#define FOOD_MAX_RADIUS 40
+#define DRAIN_FACTOR 0.01
 
 typedef struct {
     Color color;
-    int radius;
-    Vector2 pos;
-    BoundedFloat mass;
-    float speed;
-    Vector2 dir;
+    BoundedFloat drawRadius;
+    Body body;
 } Food;
 
 Food* newRandFood();

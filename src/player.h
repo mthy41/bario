@@ -1,16 +1,14 @@
 #ifndef PLAYER
 #define PLAYER
+#include "physic.h"
 #include "utils.h"
 #include <raylib.h>
 
 typedef struct {
     Color color;
-    int radius;
     char** nickname;
-    Vector2 pos;
-    float speed;
     int score;
-    BoundedFloat mass;
+    Body body;
 } Player;
 
 Player* newPlayerDefault(void);

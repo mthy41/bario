@@ -9,7 +9,10 @@ UTILS_OBJ = $(OUTPUT_DIR)/utils.o
 PARTICLE_OBJ = $(OUTPUT_DIR)/particle.o
 PLAYER_OBJ = $(OUTPUT_DIR)/player.o
 FOOD_OBJ = $(OUTPUT_DIR)/food.o
+PHYSIC_OBJ = $(OUTPUT_DIR)/physic.o
 MAIN_OBJ = $(OUTPUT_DIR)/main.o
+
+SHARED = raylib
 
 $(shell mkdir -p $(OUTPUT_DIR))
 
@@ -19,7 +22,7 @@ TEST_DIR = ./test.c
 TEST_BIN = $(BIN_DIR)/test
 TEST_OBJ = $(OUTPUT_DIR)/test.o
 TEST_INC = utils.h setup.h player.h food.h particle.h
-TEST_LNK = $(UTILS_OBJ) $(PARTICLE_OBJ) $(PLAYER_OBJ) $(FOOD_OBJ)
+TEST_LNK = $(UTILS_OBJ) $(PARTICLE_OBJ) $(PLAYER_OBJ) $(FOOD_OBJ) $(PHYSIC_OBJ)
 $(TEST_OBJ): $(TEST_DIR) $(call src, $(TEST_INC)) 
 	gcc -c $< -o $@ -I ./src/
 
@@ -32,9 +35,9 @@ tests: $(TEST_BIN)
 # -----------------------------------------
 
 
-$(BIN_NAME): $(UTILS_OBJ) $(PARTICLE_OBJ) $(PLAYER_OBJ) $(FOOD_OBJ) $(MAIN_OBJ)
+$(BIN_NAME): $(UTILS_OBJ) $(PARTICLE_OBJ) $(PLAYER_OBJ) $(FOOD_OBJ) $(MAIN_OBJ) $(PHYSIC_OBJ)
 	mkdir -p $(BIN_DIR)
-	gcc $^ -lraylib -o $@
+	gcc $^ $(addprefix -l, $(SHARED)) -lm -o $@
 
 $(MAIN_OBJ): $(call src, main.c utils.h player.h food.h setup.h)
 	gcc -c $< -o $@
@@ -45,7 +48,10 @@ $(PARTICLE_OBJ): $(call src, particle.c setup.h particle.h)
 $(PLAYER_OBJ): $(call src, player.c player.h utils.h setup.h)
 	gcc -c $< -o $@
 
-$(FOOD_OBJ): $(call src, food.c food.h utils.h setup.h)
+$(FOOD_OBJ): $(call src, food.c food.h utils.h setup.h physic.h)
+	gcc -c $< -o $@
+
+$(PHYSIC_OBJ): $(call src, physic.c, utils.h setup.h)
 	gcc -c $< -o $@
 
 $(UTILS_OBJ): $(call src, utils.c utils.h setup.h)
