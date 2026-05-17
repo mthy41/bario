@@ -19,7 +19,7 @@ typedef struct {
 Food* newRandFood();
 void drawFoods(Food** foods, int amount);
 Food** genRandFoods(int amount);
-int checkFoodColision(Player* p, Food* f);
+int checkFoodCollision(Player* p, Food* f);
 void updateFoods(Player* p, Food** fs, int fa);
 
 #endif

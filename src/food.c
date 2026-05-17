@@ -46,7 +46,7 @@ void drawFoods(Food **foods, int amount) {
     }
 }
 
-int checkFoodColision(Player *p, Food *f) {
+int checkFoodCollision(Player *p, Food *f) {
   int touch = CheckCollisionCircles(f->body.pos, 
                                     f->body.hitboxRadius, 
                                     p->body.pos, 
@@ -84,7 +84,7 @@ void updateFoods(Player *p, Food **fs, int fa) {
   for (int i = 0; i < fa; i++) {
     if (fs[i] == NULL)
       continue;
-    if (checkFoodColision(p, fs[i])) {
+    if (checkFoodCollision(p, fs[i])) {
       p->score++;
       p->body.mass.value += fs[i]->body.mass.value * 0.2;
       free(fs[i]);
@@ -95,19 +95,19 @@ void updateFoods(Player *p, Food **fs, int fa) {
     drain(fs[i]);
     updateHitBoxRadius(&fs[i]->body, FOOD_MIN_RADIUS, FOOD_MAX_RADIUS);
 
-    if (windowRightXColision(&fs[i]->body)) {
+    if (windowRightXCollision(&fs[i]->body)) {
       fs[i]->body.speed.x *= -1;
     }
 
-    if (windowLeftXColision(&fs[i]->body)) {
+    if (windowLeftXCollision(&fs[i]->body)) {
       fs[i]->body.speed.x *= -1;
     }
 
-    if (windowBotYColision(&fs[i]->body)) {
+    if (windowBotYCollision(&fs[i]->body)) {
       fs[i]->body.speed.y *= -1;
     }
 
-    if (windowTopYColision(&fs[i]->body)) {
+    if (windowTopYCollision(&fs[i]->body)) {
       fs[i]->body.speed.y *= -1;
     }
 

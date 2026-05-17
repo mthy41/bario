@@ -10,7 +10,7 @@ typedef enum {
     COLISION_ABSENT,
     COLISION_TOUCH,
     COLISION_OVERSHOOT
-} Colision;
+} Collision;
 
 typedef struct {
     Vector2 pos;
@@ -27,14 +27,14 @@ float randBodyMass(BoundedFloat* bf);
 
 void scalar(Vector2* f, float s);
 
-void move2DWithColision(Vector2 *v, float step, Vector2* d, float colisionRadius);
+void move2DWithCollision(Vector2 *v, float step, Vector2* d, float colisionRadius);
 
-    Colision windowRightXColision(Body* b);
+    Collision windowRightXCollision(Body* b);
 
-    Colision windowLeftXColision(Body* b);
+    Collision windowLeftXCollision(Body* b);
 
-    Colision windowBotYColision(Body* b);
+    Collision windowBotYCollision(Body* b);
 
-    Colision windowTopYColision(Body* b);
+    Collision windowTopYCollision(Body* b);
 
 #endif

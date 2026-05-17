@@ -21,28 +21,28 @@ void updateHitBoxRadius(Body* b, float min, float max){
     b->hitboxRadius = fmin(scaleRadius(b, max) + min, max);
 }
 
-Colision windowRightXColision(Body* b){
+Collision windowRightXCollision(Body* b){
     float point = b->pos.x + b->hitboxRadius;
     if(point <  SCREEN_WIDTH) return COLISION_ABSENT;
     if(point == SCREEN_WIDTH) return COLISION_TOUCH;
     return COLISION_OVERSHOOT;
 }
 
-Colision windowLeftXColision(Body* b){
+Collision windowLeftXCollision(Body* b){
     float point = b->pos.x - b->hitboxRadius;
     if(point >  0) return COLISION_ABSENT;
     if(point == 0) return COLISION_TOUCH;
     return COLISION_OVERSHOOT;
 }
 
-Colision windowBotYColision(Body* b){
+Collision windowBotYCollision(Body* b){
     float point = b->pos.y + b->hitboxRadius;
     if(point <  SCREEN_HEIGHT) return COLISION_ABSENT;
     if(point == SCREEN_HEIGHT) return COLISION_TOUCH;
     return COLISION_TOUCH;
 }
 
-Colision windowTopYColision(Body* b){
+Collision windowTopYCollision(Body* b){
     float point = b->pos.y - b->hitboxRadius;
     if(point >  0) return COLISION_ABSENT;
     if(point == 0) return COLISION_TOUCH;
